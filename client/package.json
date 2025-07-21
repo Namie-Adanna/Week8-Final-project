@@ -1,7 +1,7 @@
 @@ .. @@
  {
 -  "name": "vite-project",
-+  "name": "naly-cleaning-client",
++  "name": "naly-cleaning-services",
    "private": true,
    "version": "0.0.0",
    "type": "module",
