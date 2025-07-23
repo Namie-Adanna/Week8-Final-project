@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 
 // Import database connection
 import connectDB from './src/config/database.js';
+import { seedDatabase } from './src/utils/seedData.js';
 
 // Import routes
 import authRoutes from './src/routes/auth.js';
@@ -23,6 +24,12 @@ dotenv.config();
 // Connect to database
 connectDB();
 
+// Seed database with sample data
+// Always seed database to ensure we have data
+setTimeout(() => {
+  seedDatabase().catch(console.error);
+}, 2000); // Wait 2 seconds for DB connection
+
 const app = express();
 
 // Security middleware
@@ -31,7 +38,9 @@ app.use(helmet());
 // CORS configuration
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Rate limiting

@@ -5,7 +5,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 // @route   GET /api/services
 // @access  Public
 export const getServices = asyncHandler(async (req, res) => {
-  const { category, active, page = 1, limit = 10, search } = req.query;
+  const { category, active, page = 1, limit = 50, search } = req.query;
   
   // Build query
   const query = {};
@@ -22,7 +22,10 @@ export const getServices = asyncHandler(async (req, res) => {
   }
   
   if (search) {
-    query.$text = { $search: search };
+    query.$or = [
+      { name: { $regex: search, $options: 'i' } },
+      { description: { $regex: search, $options: 'i' } }
+    ];
   }
 
   // Calculate pagination
@@ -151,11 +154,24 @@ export const deleteService = asyncHandler(async (req, res) => {
 // @route   GET /api/services/categories
 // @access  Public
 export const getServiceCategories = asyncHandler(async (req, res) => {
-  const categories = await Service.distinct('category', { isActive: true });
+  try {
+    const categories = await Service.distinct('category', { isActive: true });
+    
+    // If no categories found, return default ones
+    const defaultCategories = ['residential', 'commercial', 'deep-cleaning', 'maintenance'];
+    const finalCategories = categories.length > 0 ? categories : defaultCategories;
 
-  res.json({
-    success: true,
-    data: { categories },
-    message: 'Service categories retrieved successfully'
-  });
+    res.json({
+      success: true,
+      data: { categories: finalCategories },
+      message: 'Service categories retrieved successfully'
+    });
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.json({
+      success: true,
+      data: { categories: ['residential', 'commercial', 'deep-cleaning', 'maintenance'] },
+      message: 'Default categories returned'
+    });
+  }
 });

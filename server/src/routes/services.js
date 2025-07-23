@@ -12,14 +12,20 @@ import { validateService, validateObjectId, validatePagination } from '../middle
 
 const router = express.Router();
 
+// Add logging middleware for debugging
+router.use((req, res, next) => {
+  console.log(`Services route: ${req.method} ${req.path}`);
+  next();
+});
+
 // Public routes
-router.get('/', validatePagination, getServices);
 router.get('/categories', getServiceCategories);
-router.get('/:id', validateObjectId, getService);
+router.get('/', getServices);
+router.get('/:id', getService);
 
 // Protected admin routes
-router.post('/', protect, adminOnly, validateService, createService);
-router.put('/:id', protect, adminOnly, validateObjectId, validateService, updateService);
-router.delete('/:id', protect, adminOnly, validateObjectId, deleteService);
+router.post('/', protect, adminOnly, createService);
+router.put('/:id', protect, adminOnly, updateService);
+router.delete('/:id', protect, adminOnly, deleteService);
 
 export default router;

@@ -22,14 +22,26 @@ const Services = () => {
 
   const fetchServices = async () => {
     try {
+      setLoading(true);
+      console.log('Starting to fetch services...'); // Debug log
       const params = {};
       if (selectedCategory) params.category = selectedCategory;
       if (searchTerm) params.search = searchTerm;
 
+      console.log('API params:', params); // Debug log
       const response = await servicesAPI.getAll(params);
-      setServices(response.data.data.services);
+      console.log('Services response:', response.data); // Debug log
+      setServices(response.data.data.services || []);
     } catch (error) {
+      console.error('Error fetching services:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        config: error.config
+      });
       toast.error('Failed to fetch services');
+      setServices([]);
     } finally {
       setLoading(false);
     }
@@ -38,9 +50,11 @@ const Services = () => {
   const fetchCategories = async () => {
     try {
       const response = await servicesAPI.getCategories();
-      setCategories(response.data.data.categories);
+      setCategories(response.data.data.categories || []);
     } catch (error) {
       console.error('Failed to fetch categories:', error);
+      // Set default categories if API fails
+      setCategories(['residential', 'commercial', 'deep-cleaning', 'maintenance']);
     }
   };
 
