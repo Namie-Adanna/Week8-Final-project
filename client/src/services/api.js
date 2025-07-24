@@ -2,6 +2,8 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+console.log('API Base URL:', API_BASE_URL); // Debug log
+
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -28,6 +30,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('API Error:', error); // Debug log
     if (error.response?.status === 401) {
       // Token expired or invalid
       localStorage.removeItem('token');
@@ -48,19 +51,25 @@ export const authAPI = {
 
 // Services API
 export const servicesAPI = {
-  getAll: (params) => api.get('/services', { params }),
+  getAll: (params = {}) => {
+    console.log('Fetching services with params:', params); // Debug log
+    return api.get('/services', { params });
+  },
   getById: (id) => api.get(`/services/${id}`),
   create: (serviceData) => api.post('/services', serviceData),
   update: (id, serviceData) => api.put(`/services/${id}`, serviceData),
   delete: (id) => api.delete(`/services/${id}`),
-  getCategories: () => api.get('/services/categories'),
+  getCategories: () => api.get('/services/categories')
 };
 
 // Bookings API
 export const bookingsAPI = {
   getUserBookings: (params) => api.get('/bookings', { params }),
   getAllBookings: (params) => api.get('/bookings/all', { params }),
-  create: (bookingData) => api.post('/bookings', bookingData),
+  create: (bookingData) => {
+    console.log('API: Creating booking with data:', bookingData);
+    return api.post('/bookings', bookingData);
+  },
   update: (id, updateData) => api.put(`/bookings/${id}`, updateData),
   cancel: (id, reason) => api.delete(`/bookings/${id}`, { data: { cancellationReason: reason } }),
 };

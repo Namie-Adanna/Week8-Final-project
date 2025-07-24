@@ -101,10 +101,15 @@ export const getAllBookings = asyncHandler(async (req, res) => {
 // @route   POST /api/bookings
 // @access  Private
 export const createBooking = asyncHandler(async (req, res) => {
+  console.log('Creating booking with data:', req.body);
+  console.log('User ID:', req.user.id);
+  
   const { serviceId, appointmentDate, appointmentTime, specialInstructions, address } = req.body;
 
   // Verify service exists and is active
   const service = await Service.findById(serviceId);
+  console.log('Found service:', service);
+  
   if (!service || !service.isActive) {
     return res.status(404).json({
       success: false,
@@ -115,34 +120,36 @@ export const createBooking = asyncHandler(async (req, res) => {
     });
   }
 
-  // Check for conflicting bookings (same date, time, and service)
-  const existingBooking = await Booking.findOne({
-    serviceId,
-    appointmentDate: new Date(appointmentDate),
-    appointmentTime,
-    status: { $in: ['pending', 'confirmed'] }
-  });
-
-  if (existingBooking) {
-    return res.status(409).json({
+  // Parse the appointment date
+  const parsedDate = new Date(appointmentDate);
+  console.log('Parsed appointment date:', parsedDate);
+  
+  // Validate the date
+  if (isNaN(parsedDate.getTime()) || parsedDate <= new Date()) {
+    return res.status(400).json({
       success: false,
       error: {
-        message: 'This time slot is already booked',
-        code: 'TIME_SLOT_UNAVAILABLE'
+        message: 'Invalid appointment date. Date must be in the future.',
+        code: 'INVALID_DATE'
       }
     });
   }
 
   // Create booking
-  const booking = await Booking.create({
+  const bookingData = {
     userId: req.user.id,
     serviceId,
-    appointmentDate: new Date(appointmentDate),
+    appointmentDate: parsedDate,
     appointmentTime,
     totalPrice: service.price,
-    specialInstructions,
+    specialInstructions: specialInstructions || '',
     address
-  });
+  };
+  
+  console.log('Creating booking with data:', bookingData);
+  
+  const booking = await Booking.create(bookingData);
+  console.log('Created booking:', booking);
 
   // Populate the booking with service details
   await booking.populate('serviceId', 'name description price duration category');

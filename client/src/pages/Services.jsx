@@ -91,8 +91,7 @@ const Services = () => {
             Our Cleaning Services
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Professional cleaning services tailored to your needs. Choose from our range of 
-            residential and commercial cleaning options.
+            Experience top-tier residential and commercial cleaning solutions—customized to fit your schedule, space, and standards.
           </p>
         </div>
 
@@ -161,7 +160,7 @@ const Services = () => {
                     </span>
                     <div className="flex items-center text-yellow-400">
                       <Star className="h-4 w-4 fill-current" />
-                      <span className="text-sm text-gray-600 ml-1">4.9</span>
+                      <span className="text-sm text-gray-600 ml-1">4.3</span>
                     </div>
                   </div>
 

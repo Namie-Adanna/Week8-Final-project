@@ -121,11 +121,17 @@ export const validateBooking = [
     .withMessage('Invalid service ID'),
   
   body('appointmentDate')
-    .isISO8601()
-    .toDate()
+    .notEmpty()
+    .withMessage('Appointment date is required')
     .custom((value) => {
-      if (value <= new Date()) {
-        throw new Error('Appointment date must be in the future');
+      const date = new Date(value);
+      if (isNaN(date.getTime())) {
+        throw new Error('Invalid date format');
+      }
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (date < today) {
+        throw new Error('Appointment date must be today or in the future');
       }
       return true;
     }),

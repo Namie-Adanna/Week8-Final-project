@@ -7,13 +7,20 @@ import {
   cancelBooking
 } from '../controllers/bookingController.js';
 import { protect, adminOnly } from '../middleware/auth.js';
-import { validateBooking, validateObjectId, validatePagination } from '../middleware/validation.js';
+import { validateObjectId, validatePagination } from '../middleware/validation.js';
 
 const router = express.Router();
 
+// Add logging middleware
+router.use((req, res, next) => {
+  console.log(`Bookings route: ${req.method} ${req.path}`);
+  console.log('Request body:', req.body);
+  next();
+});
+
 // Protected routes
 router.get('/', protect, validatePagination, getUserBookings);
-router.post('/', protect, validateBooking, createBooking);
+router.post('/', protect, createBooking);
 router.put('/:id', protect, validateObjectId, updateBooking);
 router.delete('/:id', protect, validateObjectId, cancelBooking);
 

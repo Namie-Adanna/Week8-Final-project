@@ -289,23 +289,6 @@ const BookService = () => {
                           <p className="mt-1 text-sm text-red-600">{errors.address.city.message}</p>
                         )}
                       </div>
-
-                      <div>
-                        <label htmlFor="address.state" className="block text-sm font-medium text-gray-700">
-                          State
-                        </label>
-                        <input
-                          {...register('address.state')}
-                          type="text"
-                          maxLength="2"
-                          className={`mt-1 input-field ${errors.address?.state ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}`}
-                          placeholder="CA"
-                        />
-                        {errors.address?.state && (
-                          <p className="mt-1 text-sm text-red-600">{errors.address.state.message}</p>
-                        )}
-                      </div>
-
                       <div>
                         <label htmlFor="address.zipCode" className="block text-sm font-medium text-gray-700">
                           ZIP Code

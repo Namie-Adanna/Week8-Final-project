@@ -14,12 +14,22 @@ const bookingSchema = new mongoose.Schema({
   appointmentDate: {
     type: Date,
     required: [true, 'Appointment date is required'],
-    validate: {
-      validator: function(date) {
-        return date > new Date();
+    validate: [
+      {
+        validator: function(date) {
+          return date instanceof Date && !isNaN(date.getTime());
+        },
+        message: 'Invalid date format'
       },
-      message: 'Appointment date must be in the future'
-    }
+      {
+        validator: function(date) {
+          const now = new Date();
+          now.setHours(0, 0, 0, 0); // Start of today
+          return date >= now;
+        },
+        message: 'Appointment date must be today or in the future'
+      }
+    ]
   },
   appointmentTime: {
     type: String,

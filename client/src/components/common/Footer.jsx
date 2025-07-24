@@ -56,11 +56,6 @@ const Footer = () => {
                   Contact
                 </Link>
               </li>
-              <li>
-                <Link to="/privacy" className="text-gray-300 hover:text-white transition-colors duration-200">
-                  Privacy Policy
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -70,7 +65,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-primary-400" />
-                <span className="text-gray-300">(555) 123-4567</span>
+                <span className="text-gray-300">+254 723850476</span>
               </li>
               <li className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-primary-400" />
@@ -79,8 +74,8 @@ const Footer = () => {
               <li className="flex items-start space-x-2">
                 <MapPin className="h-4 w-4 text-primary-400 mt-0.5" />
                 <span className="text-gray-300">
-                  123 Clean Street<br />
-                  Sparkle City, SC 12345
+                  Alta Towers<br />
+                  Kilimani, Nairobi
                 </span>
               </li>
             </ul>

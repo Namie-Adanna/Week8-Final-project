@@ -63,7 +63,7 @@ const Home = () => {
   const stats = [
     { number: '10,000+', label: 'Happy Customers' },
     { number: '50,000+', label: 'Cleanings Completed' },
-    { number: '4.9/5', label: 'Average Rating' },
+    { number: '4.5/5', label: 'Average Rating' },
     { number: '5+', label: 'Years Experience' }
   ];
 
@@ -74,14 +74,11 @@ const Home = () => {
         <div className="page-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-in">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                Professional
-                <span className="text-primary-600"> Cleaning </span>
-                Services
+              <h1 className="text-2xl md:text-3xl lg:text-3xl font-bold text-gray-900 mb-6">
+               Welcome to Naly professional cleaning services
               </h1>
               <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Transform your space with our reliable, eco-friendly cleaning services. 
-                Book online in minutes and enjoy a spotless home or office.
+                Experience the difference of a truly professional clean. At Naly, we deliver reliable, eco-conscious cleaning solutions tailored to your home or office. Book in minutes. Relax for hours.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 {isAuthenticated ? (
@@ -164,7 +161,7 @@ const Home = () => {
               Our Services
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              From regular maintenance to deep cleaning, we have the perfect service for your needs.
+              Whether you need routine upkeep or a thorough deep clean, our tailored solutions are designed to leave your space spotless, refreshed, and ready to impress.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -208,7 +205,7 @@ const Home = () => {
             Ready for a Spotless Space?
           </h2>
           <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of satisfied customers who trust Naly Cleaning for their home and office needs.
+            Discover why so many homeowners and businesses rely on Naly Cleaning Services for a fresh, immaculate environment—every time.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {isAuthenticated ? (

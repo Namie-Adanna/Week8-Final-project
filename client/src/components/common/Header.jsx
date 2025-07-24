@@ -36,7 +36,7 @@ const Header = () => {
               <Sparkles className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-bold text-gray-900">
-              Naly Cleaning
+              Naly Cleaning 
             </span>
           </Link>
 
