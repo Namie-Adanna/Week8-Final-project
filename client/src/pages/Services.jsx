@@ -95,45 +95,7 @@ const Services = () => {
           </p>
         </div>
 
-        {/* Filters */}
-        <div className="card mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <input
-                  type="text"
-                  placeholder="Search services..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="input-field pl-10"
-                />
-              </div>
-            </div>
-
-            {/* Category Filter */}
-            <div className="md:w-64">
-              <div className="relative">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="input-field pl-10 appearance-none"
-                >
-                  <option value="">All Categories</option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {formatCategory(category)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Services Grid */}
+          {/* Services Grid */}
         {services.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">No services found matching your criteria.</p>

@@ -42,19 +42,19 @@ const About = () => {
     {
       name: 'Naomi Birech',
       role: 'Founder & CEO',
-      image: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: 'https://images.pexels.com/photos/2764975/pexels-photo-2764975.jpeg',
       description: 'With 5+ years in the cleaning industry, Naomi founded Naly Cleaning to provide exceptional service.'
     },
     {
       name: 'Michael Otieno',
       role: 'Operations Manager',
-      image: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: 'https://images.pexels.com/photos/9775679/pexels-photo-9775679.jpeg',
       description: 'Michael ensures our operations run smoothly and our quality standards are consistently met.'
     },
     {
       name: 'Emily Wanjiru',
       role: 'Customer Success Lead',
-      image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400',
+      image: 'https://images.pexels.com/photos/31080755/pexels-photo-31080755.jpeg',
       description: 'Emily leads our customer success team, ensuring every client has an exceptional experience.'
     }
   ];
