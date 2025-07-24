@@ -52,7 +52,7 @@ const About = () => {
       description: 'Michael ensures our operations run smoothly and our quality standards are consistently met.'
     },
     {
-      name: 'Emily Wanjiru',
+      name: 'Emily Anyango',
       role: 'Customer Success Lead',
       image: 'https://images.pexels.com/photos/31080755/pexels-photo-31080755.jpeg',
       description: 'Emily leads our customer success team, ensuring every client has an exceptional experience.'
