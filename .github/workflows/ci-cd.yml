@@ -1,0 +1,222 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:5.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: server/package-lock.json
+    
+    - name: Install backend dependencies
+      working-directory: ./server
+      run: npm ci
+    
+    - name: Run backend tests
+      working-directory: ./server
+      run: npm test
+      env:
+        MONGODB_TEST_URI: mongodb://localhost:27017/naly-cleaning-test
+        JWT_SECRET: test-secret-key
+        NODE_ENV: test
+    
+    - name: Generate test coverage
+      working-directory: ./server
+      run: npm run test:coverage
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./server/coverage/lcov.info
+        flags: backend
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+    
+    - name: Install frontend dependencies
+      working-directory: ./client
+      run: npm ci
+    
+    - name: Run frontend tests
+      working-directory: ./client
+      run: npm test -- --coverage --watchAll=false
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./client/coverage/lcov.info
+        flags: frontend
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend]
+    
+    services:
+      mongodb:
+        image: mongo:5.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        cd server && npm ci
+        cd ../client && npm ci
+    
+    - name: Start backend server
+      working-directory: ./server
+      run: |
+        npm start &
+        sleep 10
+      env:
+        MONGODB_URI: mongodb://localhost:27017/naly-cleaning-e2e
+        JWT_SECRET: test-secret-key
+        NODE_ENV: test
+        PORT: 5000
+    
+    - name: Build frontend
+      working-directory: ./client
+      run: npm run build
+      env:
+        VITE_API_URL: http://localhost:5000/api
+    
+    - name: Start frontend server
+      working-directory: ./client
+      run: |
+        npm run preview &
+        sleep 5
+    
+    - name: Run Cypress tests
+      uses: cypress-io/github-action@v5
+      with:
+        wait-on: 'http://localhost:5173, http://localhost:5000/health'
+        wait-on-timeout: 120
+        browser: chrome
+        record: true
+      env:
+        CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  security-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend, e2e-tests]
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to Staging
+      run: |
+        echo "Deploying to staging environment..."
+        # Add your staging deployment commands here
+        # For example, deploy to Render, Railway, or other platforms
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend, e2e-tests, security-scan]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Build frontend
+      working-directory: ./client
+      run: |
+        npm ci
+        npm run build
+      env:
+        VITE_API_URL: ${{ secrets.VITE_API_URL }}
+    
+    - name: Deploy Frontend to Netlify
+      uses: netlify/actions/cli@master
+      with:
+        args: deploy --prod --dir=client/dist
+      env:
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+    
+    - name: Deploy Backend to Render
+      run: |
+        echo "Deploying backend to production..."
+        # Add your production backend deployment commands here
+        # This could be a webhook to trigger Render deployment
+        curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: always()
+    
+    steps:
+    - name: Notify deployment status
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#deployments'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      if: always()
